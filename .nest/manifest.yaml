@@ -1,0 +1,7 @@
+id: research-pack
+name: Research Pack
+description: Search arXiv and Semantic Scholar, summarize papers faithfully, and produce verified citations, chained into a literature review.
+version: 1.0.0
+min_nest_version: 0.1.0
+agents: [arxiv-researcher, paper-summarizer, citation-formatter]
+workflows: [literature-review]

@@ -1,0 +1,52 @@
+id: literature-review
+name: Literature Review
+steps:
+  - id: search
+    agent: arxiv-researcher
+    critical: true
+    input: >-
+      Run a literature search on the standing topic in your instructions.md, using its categories,
+      date window and shortlist size. Give the ranked table and the "Gaps and next searches" note,
+      then end your reply with the complete shortlist (every field, abstracts verbatim) in one
+      fenced json block. The next agents cannot see your files; they only get your reply.
+  - id: summarize
+    agent: paper-summarizer
+    critical: true
+    input: >-
+      Summarize every paper in the JSON shortlist at the end of the search results below. If a
+      full-text PDF of a shortlisted paper is in your own ./papers/ folder, use it; otherwise
+      summarize from the abstract in the JSON and mark it "Read from: abstract only". Save one
+      file per paper to ./summaries/ and include every summary in full in your reply.
+
+      Search results:
+      {{search.output}}
+  - id: cite
+    agent: citation-formatter
+    on_failure: continue
+    input: >-
+      Create verified citations for every paper in the JSON shortlist at the end of the search
+      results below, in the styles set in your instructions.md. Save references.bib and
+      references.md, and reply with the APA list, the complete BibTeX in a fenced bibtex block,
+      and the verification report.
+
+      Search results:
+      {{search.output}}
+  - id: synthesize
+    agent: paper-summarizer
+    requires_approval: true
+    input: >-
+      Write the final literature review and save it to ./literature/review.md. Structure: research
+      question, method (queries, number of candidates and papers kept), thematic synthesis with
+      inline (FirstAuthor Year) citations, a comparison table, open problems, suggested reading
+      order, and a References section copied from the APA list below (if citations are missing,
+      list title, authors, year and URL from the shortlist instead). Use only the summaries, the
+      citations and the search results below, and include the full review in your reply.
+
+      Summaries:
+      {{summarize.output}}
+
+      Citations and verification report:
+      {{cite.output}}
+
+      Search results:
+      {{search.output}}
